@@ -367,7 +367,7 @@ To interact with Firebase services from your terminal, you need to install the F
 - **Enable Firestore Rules:**
   - Open your web browser and go to [https://console.firebase.google.com/](https://console.firebase.google.com/).
   - Select your project from the Firebase console.
-  - In the left sidebar, navigate to **Firestore Database**, then click on the **Rules** tab.
+  - In the left sidebar, navigate to **Firestore Database** under `build` optiuon, then click on the **Rules** tab.
   - Replace `firestore.rules` with the following rules to restrict access to your email,
   - replace `your-email@gmail.com` with your actual email address.
     ```txt
