@@ -479,4 +479,26 @@ To interact with Firebase services from your terminal, you need to install the F
     - Click the **Run** button (▶️) to execute the script.
     - This will fetch the last 100 emails from your Gmail account, scan them for expenses, and if any HDFC expenses are found, it will add them to Firestore.
 
-  
+---
+
+## Post-Setup Instructions
+
+Congratulations! You have successfully completed the setup for Pennyfox.
+
+### Accessing the App
+
+You can now start using the application by navigating to `https://<your-project-id>.web.app` in your web browser. Replace `<your-project-id>` with the ID of your Firebase project.
+
+### Installing as a PWA
+
+For a more native experience, you can install Pennyfox as a Progressive Web App (PWA) directly from Google Chrome on both Android and iOS devices.
+
+### Automatic Expense Tracking
+
+The Google Apps Script you deployed will automatically run every hour. It will fetch new expense information from your Gmail account and securely add it to your Firebase database.
+
+### Important Next Steps
+
+1.  **Configure Tags:** Before you start, navigate to the **Settings** section within the app. You will need to add your own list of tags for categorizing expenses, as this is not pre-populated. This is a one-time setup.
+
+2.  **Bank Configuration:** Please note that the Configuration feature under Settings is still under development. By default, UPI and credit card expenses will be tracked automatically without any additional configuration.
