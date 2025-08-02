@@ -8,10 +8,20 @@ This guide will walk you through setting up the Arctic Fox project on a Linux/Mi
   requires adding a billing account to your Firebase project, for which a credit card is mandatory.
 
 
-- **ID Verification**: Please note that a Google Cloud billing account requires valid ID verification. 
+- **Govt ID Verification**: Please note that a Google Cloud billing account requires valid ID verification. 
   While this is not an immediate blocker, and you can proceed with the initial setup, 
   Google will eventually require verification to continue using the services (it will stop services after few weeks).
   You will get email from Google cloud team with detailed steps.
+
+
+- **Free Tier Usage**: The Firebase Blaze plan offers genrous free tier limits, which should be sufficient for most personal use cases. https://firebase.google.com/pricing
+    - 1 GB of storage in Firestore.
+    - 50,000 reads, 20,000 writes, and 20,000 deletes per day
+    - 1 GB of data transfer per month
+    - 1 GB of storage in Firebase Storage
+    - 1 GB of data transfer in Firebase Hosting
+    - 1 GB of data transfer in Firebase Functions
+    - 1 GB of data transfer in Firebase Authentication
 
 > **Note:** I have been using this project for tracking my expenses for the last 2 years, and I have rarely crossed the
 > free tier limits. Occasionally, I was billed ₹1-2 when I was testing Firestore with a high volume of requests.
