@@ -203,14 +203,15 @@ PennyFox is built using a modern front-end architecture with the following key c
 ## Future Roadmap
 
 - [ ] Multiple bank support (We need people with different bank account to help us with this)
-- [ ] Enhancing Insights with more detailed analytics
+- [ ] Enhancing Insights with more detailed analytics & better graph support grouped category
+- [ ] Multi-selected expense tagging feature
 - [ ] Expense analysis using historical data (Firebase AI Logic)
 - [ ] Expense sharing/tracking between users (Multi user persona)
 
-## Contributing
+## Contributing & Local Development
 
-We are still in process of creating a contribution guide & local development setup instructions.
-once we set up the guide, we will make it open for public contribution! 
+We welcome contributions to PennyFox! If you're interested in helping out, please refer to our [Development Guide](DEVELOP.md) for instructions on setting up the project locally, contributing code, and submitting pull requests.
+
 
 ## Support the Project
 
