@@ -1,3 +1,42 @@
+### Setting Up a Local Development Environment
+
+**Prerequisites**
+- Node.js (version >= 20.0.0)
+- npm (version >= 10.0.0)
+
+**Firebase Setup**
+
+This project uses Firebase for authentication and database services. To run the app locally, you'll need to create your own Firebase project.
+First complete the setup instructions in the [Setup Documentation](./public/docs/setup.md) .
+
+- You would have already created `.env` file in the root folder of your project in below format as per the setup instructions.
+- For React project, you can use the following format:
+    ```env
+    REACT_APP_FIREBASE_API_KEY=your-api-key
+    REACT_APP_FIREBASE_AUTH_DOMAIN=your-auth-domain
+    REACT_APP_FIREBASE_PROJECT_ID=your-project-id
+    REACT_APP_FIREBASE_STORAGE_BUCKET=your-storage-bucket
+    REACT_APP_FIREBASE_MESSAGING_SENDER_ID=your-messaging-sender-id
+    REACT_APP_FIREBASE_APP_ID=your-app-id
+    ```
+
+1.  **Clone the Repository**:
+    ```bash
+    git clone https://github.com/your-username/pennyfox.git
+    cd pennyfox
+    ```
+2.  **Install Dependencies**:
+    ```bash
+    npm install
+    ```
+3.  **Start the Development Server**:
+    ```bash
+    npm start
+    ```
+This will start the app in development mode. Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+
+
+
 ### Branching Strategy
 
 We follow a simplified version of Gitflow, which is well-suited for open-source projects:
@@ -17,6 +56,3 @@ We follow a simplified version of Gitflow, which is well-suited for open-source 
 6.  **Create a Pull Request**: Create a pull request (PR) from your branch to the `develop` branch of the PennyFox repository.
 7.  **Code Review**: Your PR will be reviewed by the project maintainers. Address any feedback and make necessary changes.
 8.  **Merge**: Once your PR is approved, it will be merged into the `develop` branch.
-
-### Setting Up a Local Development Environment
-
