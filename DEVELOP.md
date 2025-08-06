@@ -35,6 +35,41 @@ First complete the setup instructions in the [Setup Documentation](./public/docs
     ```
 This will start the app in development mode. Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
 
+### AppScript Development
+
+For developing Google Apps Script code, you have two main options:
+
+1.  **Using `clasp`**:
+    *   `clasp` is a command-line tool that lets you develop your Apps Script projects locally.
+    *   You can write code in your favorite editor, and then use `clasp push` to upload the code to your script project.
+    *   For `clasp push` to work, you need a `.clasp.json` file in the `appScript/` directory. This file links your local code to the correct Google Apps Script project.
+    *   The `.clasp.json` file should contain the `scriptId` of your project, which you can find in the Apps Script editor under "Project Settings".
+        ```json
+        {
+        "scriptId": "your-apps-script-id",
+        "rootDir": "",
+        "scriptExtensions": [
+        ".js",
+        ".gs"
+        ],
+        "htmlExtensions": [
+        ".html"
+        ],
+        "jsonExtensions": [
+        ".json"
+        ],
+        "filePushOrder": [],
+        "skipSubdirectories": false
+        }
+        ```
+    *   This is the recommended approach for managing larger projects and for integrating with version control systems like Git.
+
+
+2.  **Using the AppScript Web Editor**:
+    *   You can also work directly in the Google Apps Script web editor.
+    *   This allows you to write, save, run, and test your code in the same environment.
+    *   It's a good option for quick changes or for those who prefer an all-in-one web-based IDE.
+
 
 
 ### Branching Strategy
