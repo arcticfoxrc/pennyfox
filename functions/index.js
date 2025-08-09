@@ -49,6 +49,82 @@ const invalidResponse = {
     500: "Internal Server Error"
 }
 
+
+
+// index.js
+const { google } = require("googleapis");
+
+/**
+ * Cloud Function to enable Gmail push notifications for a user.
+ * This function is designed to be triggered by an HTTP POST request.
+ * It expects the user's access token and the Pub/Sub topic name in the request body.
+ *
+ * @param {object} req The HTTP request object.
+ * @param {object} res The HTTP response object.
+ */
+exports.watchGmailMailbox = async (req, res) => {
+    // Set CORS headers for all responses to allow requests from your React app
+    res.set("Access-Control-Allow-Origin", "*"); // Consider restricting this to your React app's domain in production
+    res.set("Access-Control-Allow-Methods", "POST, GET, OPTIONS");
+    res.set("Access-Control-Allow-Headers", "Content-Type, Authorization");
+
+    // Handle preflight OPTIONS request
+    if (req.method === "OPTIONS") {
+        res.status(204).send("");
+        return;
+    }
+
+    // Ensure it's a POST request
+    if (req.method !== "POST") {
+        return res.status(405).send("Method Not Allowed. This function only accepts POST requests.");
+    }
+
+    const { accessToken, userId = "me" } = req.body; // userId defaults to 'me' for the authenticated user
+    const topicName = process.env.GMAIL_PUBSUB_TOPIC; // Get topic name from environment variables
+
+    if (!accessToken || !topicName) {
+        return res.status(400).send("Missing accessToken or Pub/Sub topic name.");
+    }
+
+    try {
+        // Authenticate with Gmail API using the provided access token
+        const oAuth2Client = new google.auth.OAuth2();
+        oAuth2Client.setCredentials({ access_token: accessToken });
+
+        const gmail = google.gmail({ version: "v1", auth: oAuth2Client });
+
+        // Make the users.watch API call
+        const response = await gmail.users.watch({
+            userId: userId,
+            requestBody: {
+                topicName: topicName,
+                labelIds: ["INBOX"], // You can specify other labels like ['INBOX', 'IMPORTANT']
+                labelFilterBehavior: "INCLUDE" // Or 'EXCLUDE'
+            }
+        });
+
+        console.log("Gmail watch request successful:", response.data);
+        res.status(200).json({
+            message: "Gmail push notifications enabled successfully.",
+            historyId: response.data.historyId,
+            expiration: response.data.expiration
+        });
+
+    } catch (error) {
+        console.error("Error enabling Gmail push notifications:", error);
+
+        // Provide a more detailed error message based on the error received
+        if (error.code === 401 || error.code === 403) {
+            res.status(error.code).send("Authentication or permission error: " + error.message);
+        } else if (error.code === 400) {
+            res.status(error.code).send("Bad Request: " + error.message);
+        } else {
+            res.status(500).send("Internal Server Error: " + error.message);
+        }
+    }
+};
+
+
 exports.addExpenseData = onRequest(async (req, res) => {
 
     const userEmail = process.env.USER_EMAIL;
