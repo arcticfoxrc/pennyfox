@@ -73,12 +73,49 @@ async function myExpenseFunction() {
         let cost;
         let vendor;
 
-        console.log("Email snippet ", snippet.substring(0,150));
+        console.log("Email snippet ", snippet);
 
-        // continue;
 
         if (snippet.includes('E-mandate')) {
-            console.log('-> E-mandate mail');
+
+            if(snippet.includes('has been successfully paid')) {
+
+                console.log('-> E-mandate mail detected. Fetching full body...');
+
+                const fullEmailBody = findBody(res.payload.parts);
+
+                if (fullEmailBody) {
+                    // If the email body is HTML, extract its plain text content
+                    if (res.payload.mimeType === 'text/html' || res.payload.parts.some(p => p.mimeType === 'text/html')) {
+                        const plainTextContent = extractPlainTextFromHtml(fullEmailBody);
+                        // const plainTextContent = Extracted Plain Text Content:  HDFC BANK Dear Customer, Greetings from HDFC Bank! Your NETFLIX bill, set up through E-mandate (Auto payment),
+                        // has been successfully paid using your HDFC Bank Credit Card ending 5667. Transaction Details: Amount: INR 649.00 Date: 10/08/2025 SI Hub ID: XYZZZZZ To manage your e-Mandates,
+                        // please visit: https://www.sihub.in/managesi/hdfcbank Thank you for banking with us. Warm regards, HDFC Bank For more details on Service charges and Fees, click here. © HDFC Bank
+
+                        console.log("Extracted Plain Text Content: ", plainTextContent.substring(0, 500) + (plainTextContent.length > 500 ? "..." : ""));
+
+                        type = 'E-mandate';
+
+                        const eMandateCostRegex = /Amount: INR\s(.*?)\sDate/; // 'Rs 24.00 at'
+                        const eMandateVendorRegex = /Your\s(.*?)\sbill/; // 'towards MEDPLUS KONNENA AGRAHA on 09-02'
+
+
+                        console.log('-> snippet: ', plainTextContent);
+                        console.log('-> snippet: cost ', plainTextContent.match(eMandateCostRegex));
+                        console.log('-> snippet: vendor ', plainTextContent.match(eMandateVendorRegex));
+
+                        cost = plainTextContent.match(eMandateCostRegex)[1];
+                        vendor = plainTextContent.match(eMandateVendorRegex)[1];
+
+                        expense = getExpense(Number(res.internalDate), 'upi', mailId);
+                        expense.costType = 'debit';
+
+                    } else {
+                        console.log("Email body is not a HTML type ");
+                    }
+                }
+            }
+
         } else if (snippet.includes('debited from your HDFC Bank Credit Card ending')) {
 
             // const CREDIT_CARD_MSG = Dear Customer, Greetings from HDFC Bank! Rs.782.88 is debited from your HDFC Bank
@@ -162,7 +199,7 @@ async function myExpenseFunction() {
                 expense.tag = obj.tag;
             }
 
-            // await addExpense(expense, accessToken);
+            await addExpense(expense, accessToken);
 
             console.log('-> ', type, ' cost: ', expense.cost);
             console.log('-> ', type, ' vendor: ', expense.vendor);

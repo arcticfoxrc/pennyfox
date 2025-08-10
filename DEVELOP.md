@@ -91,3 +91,11 @@ We follow a simplified version of Gitflow, which is well-suited for open-source 
 6.  **Create a Pull Request**: Create a pull request (PR) from your branch to the `develop` branch of the PennyFox repository.
 7.  **Code Review**: Your PR will be reviewed by the project maintainers. Address any feedback and make necessary changes.
 8.  **Merge**: Once your PR is approved, it will be merged into the `develop` branch.
+
+### Version Changes Guide
+
+We follow Semantic Versioning (SemVer) for managing releases. The version number has the format `vX.Y.Z`, where:
+
+*   `X` is the major version (incremented for breaking changes).
+*   `Y` is the minor version (incremented for new features).
+*   `Z` is the patch version (incremented for bug fixes).
