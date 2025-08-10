@@ -73,27 +73,29 @@ async function myExpenseFunction() {
         let cost;
         let vendor;
 
+        console.log("Email snippet ", snippet.substring(0,150));
+
+        // continue;
+
         if (snippet.includes('E-mandate')) {
             console.log('-> E-mandate mail');
-        } else if (snippet.includes('Thank you for using your HDFC Bank Credit Card ending')) {
+        } else if (snippet.includes('debited from your HDFC Bank Credit Card ending')) {
 
-            // const CREDIT_CARD_MSG = 'Dear Card Member, Thank you for using your HDFC Bank Credit Card \
-            // ending 5667 for Rs 858.20 at ZOMATO on 09-02-2025 22:08:17. \
-            // Authorization code:- 059556 After the above transaction, the available'
+            // const CREDIT_CARD_MSG = Dear Customer, Greetings from HDFC Bank! Rs.782.88 is debited from your HDFC Bank
+            // Credit Card ending 5667 towards TechMash Solutions Pri on 10 Aug, 2025 at 12:21:54. If you did not authorize this
 
             type = 'Credit card'
-            const creditCardCostRegex = /Rs\b\W\b.+ at/g; // 'Rs 24.00 at'
-            const creditCardVendorRegex = /at\b\W\b.+ on \b\d{2}-\d{2}\b/g; // 'at MEDPLUS KONNENA AGRAHA on 09-02'
+            const creditCardCostRegex = /Rs\b\W\b.+ is debited/g; // 'Rs 24.00 at'
+            const creditCardVendorRegex = /towards\s(.*?)\son/; // 'towards MEDPLUS KONNENA AGRAHA on 09-02'
 
 
             console.log('-> snippet: ', snippet);
-            console.log('-> snippet:1 ', snippet.match(creditCardCostRegex));
-            console.log('-> snippet: ', snippet);
-            console.log('-> snippet:2 ', snippet.match(creditCardVendorRegex));
+            console.log('-> snippet: cost ', snippet.match(creditCardCostRegex));
+            console.log('-> snippet: vendor ', snippet.match(creditCardVendorRegex));
 
 
-            cost = snippet.match(creditCardCostRegex)[0].replace('Rs ', '').replace(' at', '');
-            vendor = snippet.match(creditCardVendorRegex)[0].replace('at ', '').slice(0, -9);
+            cost = snippet.match(creditCardCostRegex)[0].replace('Rs.', '').replace(' is debited', '');
+            vendor = snippet.match(creditCardVendorRegex)[0].replace('towards ', '').replace(' on', '');
 
 
             expense = getExpense(Number(res.internalDate), 'credit', mailId);
@@ -111,15 +113,15 @@ async function myExpenseFunction() {
                 type = 'UPI Credit';
 
                 const upiCreditCostRegex = /Rs\b\W\b.+ is successfully/g; // 'Rs.85.00 is successfully'
-                const upiCreditVendorRegex = /VPA\b\W\b.+ on \b\d{2}-\d{2}\b/g; // 'VPA aayushXYZ@okaxis AYUSH SHARMA on 09-02'
+                const upiCreditVendorRegex = /VPA\s(.*?)\son/; // 'VPA aayushXYZ@okaxis AYUSH SHARMA on 09-02'
 
                 snippet = snippet.replace('Rs. ', 'Rs.');
                 console.log('-> snippet: ', snippet);
-                console.log('-> snippet:1 ', snippet.match(upiCreditCostRegex));
-                console.log('-> snippet:2 ', snippet.match(upiCreditVendorRegex));
+                console.log('-> snippet: cost ', snippet.match(upiCreditCostRegex));
+                console.log('-> snippet: vendor ', snippet.match(upiCreditVendorRegex));
 
                 cost = snippet.match(upiCreditCostRegex)[0].replace('Rs.', '').replace(' is successfully', '');
-                vendor = snippet.match(upiCreditVendorRegex)[0].replace('VPA ', '').slice(0, -9);
+                vendor = snippet.match(upiCreditVendorRegex)[0].replace('VPA ', '').replace(' on','');
 
                 expense = getExpense(Number(res.internalDate), 'upi', mailId);
                 expense.costType = 'credit';
@@ -134,14 +136,14 @@ async function myExpenseFunction() {
                 type = 'UPI Debit';
 
                 const upiDebitCostRegex = /Rs\b\W\b.+ has been/g; // 'Rs.11.00 has been'
-                const upiDebitVendorRegex = /VPA\b\W\b.+ on \b\d{2}-\d{2}\b/g; // 'VPA yash-1@okicici YASH R ABC on 10-02'
+                const upiDebitVendorRegex = /VPA\s(.*?)\son/; // 'VPA yash-1@okicici YASH R ABC on 10-02'
 
                 console.log('-> snippet: ', snippet);
-                console.log('-> snippet:1 ', snippet.match(upiDebitCostRegex));
-                console.log('-> snippet:2 ', snippet.match(upiDebitVendorRegex));
+                console.log('-> snippet: cost ', snippet.match(upiDebitCostRegex));
+                console.log('-> snippet: vendor ', snippet.match(upiDebitVendorRegex));
 
                 cost = snippet.match(upiDebitCostRegex)[0].replace('Rs.', '').replace(' has been', '');
-                vendor = snippet.match(upiDebitVendorRegex)[0].replace('VPA ', '').slice(0, -9);
+                vendor = snippet.match(upiDebitVendorRegex)[0].replace('VPA ', '').replace(' on', '');
 
                 expense = getExpense(Number(res.internalDate), 'upi', mailId);
                 expense.costType = 'debit';
@@ -152,7 +154,7 @@ async function myExpenseFunction() {
         if (expense !== null) {
 
             expense.cost = Number(cost)
-            expense.vendor = vendor.toUpperCase()
+            expense.vendor = vendor.toUpperCase().substring(0,50);
 
             const obj = vendorTag.find(({vendor}) => expense.vendor === vendor);
 
@@ -160,10 +162,10 @@ async function myExpenseFunction() {
                 expense.tag = obj.tag;
             }
 
-            await addExpense(expense, accessToken);
+            // await addExpense(expense, accessToken);
 
             console.log('-> ', type, ' cost: ', expense.cost);
-            console.log('-> ', type, ' snippet: ', snippet);
+            console.log('-> ', type, ' vendor: ', expense.vendor);
             console.log('-> ', type, ' expense: ', expense);
         }
 
@@ -187,7 +189,7 @@ async function myExpenseFunction() {
  */
 const getExpense = (date, type, mailId) => {
     return {
-        cost: 0, costType: 'debit', vendor: null, tag: null, type, date, modifiedDate: date, user: USER_ID, mailId
+        cost: 0, costType: 'debit', vendor: null, tag: null, type, date, modifiedDate: date, user: 'xyz', mailId
     };
 }
 
