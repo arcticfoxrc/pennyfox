@@ -121,7 +121,7 @@ async function myExpenseFunction() {
             // const CREDIT_CARD_MSG = Dear Customer, Greetings from HDFC Bank! Rs.782.88 is debited from your HDFC Bank
             // Credit Card ending 5667 towards TechMash Solutions Pri on 10 Aug, 2025 at 12:21:54. If you did not authorize this
 
-            type = 'Credit card'
+            type = 'credit-card'
             const creditCardCostRegex = /Rs\b\W\b.+ is debited/g; // 'Rs 24.00 at'
             const creditCardVendorRegex = /towards\s(.*?)\son/; // 'towards MEDPLUS KONNENA AGRAHA on 09-02'
 
@@ -147,7 +147,7 @@ async function myExpenseFunction() {
                 // **1811 by VPA aayushXYZ@okaxis AYUSH SHARMA on 09-02-25. Your UPI \
                 // transaction reference number is 5048888888. Thank you for';
 
-                type = 'UPI Credit';
+                type = 'upi';
 
                 const upiCreditCostRegex = /Rs\b\W\b.+ is successfully/g; // 'Rs.85.00 is successfully'
                 const upiCreditVendorRegex = /VPA\s(.*?)\son/; // 'VPA aayushXYZ@okaxis AYUSH SHARMA on 09-02'
@@ -170,7 +170,7 @@ async function myExpenseFunction() {
                 // to VPA yash-1@okicici YASH R ABC on 09-02-25.\
                 // Your UPI transaction reference number is 5048888888. If you did not'
 
-                type = 'UPI Debit';
+                type = 'upi';
 
                 const upiDebitCostRegex = /Rs\b\W\b.+ has been/g; // 'Rs.11.00 has been'
                 const upiDebitVendorRegex = /VPA\s(.*?)\son/; // 'VPA yash-1@okicici YASH R ABC on 10-02'
