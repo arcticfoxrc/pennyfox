@@ -16,8 +16,8 @@
     },
     {
       "snippetStrings": ["Your UPI transaction"],
-      "costRegex": "Amount: INR\\s(.*?)\\sDate",
-      "vendorRegex": "Your\\s(.*?)\\sbill",
+      "costRegex": "Rs\\.(.*?)\\shas been debited",
+      "vendorRegex": "VPA\\s(.*?)\\son",
       "type": "upi",
       "costType": "debit"
     },
