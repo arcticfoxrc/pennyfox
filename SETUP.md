@@ -502,3 +502,6 @@ The Google Apps Script you deployed will automatically run every hour. It will f
 1.  **Configure Tags:** Before you start, navigate to the **Settings** section within the app. You will need to add your own list of tags for categorizing expenses, as this is not pre-populated. This is a one-time setup.
 
 2.  **Bank Configuration:** Please note that the Configuration feature under Settings is still under development. By default, UPI and credit card expenses will be tracked automatically without any additional configuration.
+
+
+Happy expense tracking!

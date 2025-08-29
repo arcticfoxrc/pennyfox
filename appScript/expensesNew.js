@@ -58,7 +58,8 @@ async function myExpenseFunction() {
     console.log("Last mail id ", mailId);
 
     let lastMailIdIndex = mailIdList.indexOf(mailId);
-    mailIdList = mailIdList.slice(lastMailIdIndex + 1);
+    mailIdList = mailIdList.slice(90);
+    // mailIdList = mailIdList.slice(lastMailIdIndex + 1);
     console.log("Pending mail id list ", mailIdList);
 
     // return;
@@ -76,71 +77,69 @@ async function myExpenseFunction() {
 
         console.log("Email snippet ", snippet);
 
-        for (const hdfcKey in emailParsingConfig.hdfc) {
-            const config = emailParsingConfig.hdfc[hdfcKey];
+        for (const hdfcIndex in emailParsingConfig.hdfc) {
+            const config = emailParsingConfig.hdfc[hdfcIndex];
 
             let expense = null;
             let type = '';
             let cost;
             let vendor;
 
-            if (snippet.includes(config.subjectString)) {
-                let subStringFound = false;
-                for (const subString of config.subjectSubStrings) {
-                    if (snippet.includes(subString)) {
-                        subStringFound = true;
-                        break;
-                    }
+            let subStringFound = true;
+            for (const subString of config.snippetStrings) {
+                if (!snippet.includes(subString)) {
+                    subStringFound = false;
+                    break;
                 }
+            }
 
-                if (subStringFound) {
-                    type = config.type;
-                    try {
-                        cost = snippet.match(new RegExp(config.costRegex))[1];
-                        vendor = snippet.match(new RegExp(config.vendorRegex))[1];
+            if (subStringFound) {
+                type = config.type;
+                try {
+                    console.log('-> Matched config: ', config);
+                    cost = snippet.match(new RegExp(config.costRegex))[1];
+                    vendor = snippet.match(new RegExp(config.vendorRegex))[1];
 
-                        expense = getExpense(Number(res.internalDate), config.type, mailId);
-                        expense.costType = config.costType;
-                        console.log('-> Matched config: ', config);
-                        console.log('-> Cost: ', cost);
-                        console.log('-> Vendor: ', vendor);
+                    expense = getExpense(Number(res.internalDate), config.type, mailId);
+                    expense.costType = config.costType;
 
-                        expense.cost = Number(cost)
-                        expense.vendor = vendor.toUpperCase().substring(0, 50);
+                    console.log('-> Cost: ', cost);
+                    console.log('-> Vendor: ', vendor);
 
-                        const obj = vendorTag.find(({vendor}) => expense.vendor === vendor);
+                    expense.cost = Number(cost)
+                    expense.vendor = vendor.toUpperCase().substring(0, 50);
 
-                        if (obj) {
-                            expense.tag = obj.tag;
-                        }
+                    const obj = vendorTag.find(({vendor}) => expense.vendor === vendor);
 
-                        // await addExpense(expense, accessToken);
-
-                        console.log('-> ', type.toUpperCase(), ' cost: ', expense.cost);
-                        console.log('-> ', type.toUpperCase(), ' vendor: ', expense.vendor);
-                        console.log('-> ', type.toUpperCase(), ' expense: ', expense);
-
-                    } catch (e) {
-                        console.error('Error parsing snippet with config: ', config, e);
+                    if (obj) {
+                        expense.tag = obj.tag;
                     }
-                    break; // Exit the loop after the first matching config
+
+                    // await addExpense(expense, accessToken);
+
+                    console.log('-> ', type.toUpperCase(), ' cost: ', expense.cost);
+                    console.log('-> ', type.toUpperCase(), ' vendor: ', expense.vendor);
+                    console.log('-> ', type.toUpperCase(), ' expense: ', expense);
+
+                } catch (e) {
+                    console.error('Error parsing snippet with config: ', config, e);
                 }
-
-
+                break; // Exit the loop after the first matching config
             }
 
 
         }
+
 
         lastMailId = mailId;
 
     }
 
 
-    if (lastMailId) {
-        console.log('Post execution last mail id ', lastMailId);
-        setOneDoc("config", "lastGmailId", lastMailId, accessToken);
-    }
+    // if (lastMailId) {
+    //     console.log('Post execution last mail id ', lastMailId);
+    //     setOneDoc("config", "lastGmailId", lastMailId, accessToken);
+    // }
 
 
 }
