@@ -9,8 +9,8 @@
     },
     {
       "snippetStrings": ["Your UPI transaction", "successfully credited"],
-      "costRegex": "Amount: INR\\s(.*?)\\sDate",
-      "vendorRegex": "Your\\s(.*?)\\sbill",
+      "costRegex": "\\.(.*?)\\ is successfully credited",
+      "vendorRegex": "VPA\\s(.*?)\\son",
       "type": "upi",
       "costType": "credit"
     },
