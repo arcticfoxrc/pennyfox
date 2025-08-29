@@ -1,25 +1,32 @@
 {
-  "hdfc": {
-    "credit-card": {
-      "snippetStrings": ["HDFC Bank Statement"],
+  "hdfc": [
+    {
+      "snippetStrings": ["debited from your HDFC Bank Credit Card ending"],
       "costRegex": "Amount: INR\\s(.*?)\\sDate",
       "vendorRegex": "Your\\s(.*?)\\sbill",
       "type": "credit-card",
       "costType": "debit"
     },
-    "upi": {
-      "snippetStrings": ["HDFC Bank Statement"],
+    {
+      "snippetStrings": ["Your UPI transaction", "successfully credited"],
+      "costRegex": "Amount: INR\\s(.*?)\\sDate",
+      "vendorRegex": "Your\\s(.*?)\\sbill",
+      "type": "upi",
+      "costType": "credit"
+    },
+    {
+      "snippetStrings": ["Your UPI transaction"],
       "costRegex": "Amount: INR\\s(.*?)\\sDate",
       "vendorRegex": "Your\\s(.*?)\\sbill",
       "type": "upi",
       "costType": "debit"
     },
-    "e-mandate": {
+    {
       "snippetStrings": ["E-mandate", "has been successfully paid"],
       "costRegex": "Amount: INR\\s(.*?)\\sDate",
       "vendorRegex": "Your\\s(.*?)\\sbill",
       "type": "e-mandate",
       "costType": "debit"
     }
-  }
+  ]
 }
