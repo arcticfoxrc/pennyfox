@@ -22,7 +22,7 @@ GNU General Public License for more details, or get a copy at
 
 
 /*
- * Copyright (C) 2025 Rushikesh <rushikc.dev@gmail.com>
+ * Copyright (C) 2025 <arcticfoxrc> <arcticfoxrc@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the

@@ -1,3 +1,18 @@
+/*
+ * Copyright (C) 2025 <arcticfoxrc> <arcticfoxrc@gmail.com>
+ *
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the
+ * Free Software Foundation; either version 3 of the License, or (at your
+ * option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details, or get a copy at
+ * <https://www.gnu.org/licenses/gpl-3.0.txt>.
+ */
+
 /// <reference path="functions.js" />
 /* eslint-disable */
 // noinspection JSUnresolvedReference
@@ -5,21 +20,6 @@
 // noinspection JSUnusedGlobalSymbols
 // noinspection JDuplicatedCode
 // noinspection JSUnresolvedReference
-
-
-/*
-Copyright (C) 2025 <arcticfoxrc> <arcticfoxrc@gmail.com>
-
-This program is free software; you can redistribute it and/or modify it
-under the terms of the GNU General Public License as published by the
-Free Software Foundation; version 3 of the License.
-
-This program is distributed in the hope that it will be useful, but
-WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-GNU General Public License for more details, or get a copy at
-<https://www.gnu.org/licenses/gpl-3.0.txt>.
-*/
 
 
 /**
@@ -60,150 +60,108 @@ async function myExpenseFunction() {
     let lastMailIdIndex = mailIdList.indexOf(mailId);
     mailIdList = mailIdList.slice(lastMailIdIndex + 1);
     console.log("Pending mail id list ", mailIdList);
-
+    console.log("Pending mail id length", mailIdList.length);
     // return;
+
+    const emailParsingConfig = JSON.parse(UrlFetchApp.fetch(
+        'https://raw.githubusercontent.com/arcticfoxrc/pennyfox/main/appScript/emailParsingConfig.json'
+    ).getContentText());
+
 
     for (const mailIndex in mailIdList) {
         let mailId = mailIdList[mailIndex];
         res = Gmail.Users.Messages.get('me', mailId);
 
         let snippet = res.snippet;
-        let expense = null;
-        let type = '';
-        let cost;
-        let vendor;
+
 
         console.log("Email snippet ", snippet);
 
+        for (const hdfcIndex in emailParsingConfig.v1.config) {
+            const config = emailParsingConfig.v1.config[hdfcIndex];
 
-        if (snippet.includes('E-mandate')) {
+            let expense = null;
+            let type = '';
+            let cost;
+            let vendor;
 
-            if(snippet.includes('has been successfully paid')) {
-
-                console.log('-> E-mandate mail detected. Fetching full body...');
-
-                const fullEmailBody = findBody(res.payload.parts);
-
-                if (fullEmailBody) {
-                    // If the email body is HTML, extract its plain text content
-                    if (res.payload.mimeType === 'text/html' || res.payload.parts.some(p => p.mimeType === 'text/html')) {
-                        const plainTextContent = extractPlainTextFromHtml(fullEmailBody);
-                        // const plainTextContent = Extracted Plain Text Content:  HDFC BANK Dear Customer, Greetings from HDFC Bank! Your NETFLIX bill, set up through E-mandate (Auto payment),
-                        // has been successfully paid using your HDFC Bank Credit Card ending 5667. Transaction Details: Amount: INR 649.00 Date: 10/08/2025 SI Hub ID: XYZZZZZ To manage your e-Mandates,
-                        // please visit: https://www.sihub.in/managesi/hdfcbank Thank you for banking with us. Warm regards, HDFC Bank For more details on Service charges and Fees, click here. © HDFC Bank
-
-                        console.log("Extracted Plain Text Content: ", plainTextContent.substring(0, 500) + (plainTextContent.length > 500 ? "..." : ""));
-
-                        type = 'E-mandate';
-
-                        const eMandateCostRegex = /Amount: INR\s(.*?)\sDate/; // 'Rs 24.00 at'
-                        const eMandateVendorRegex = /Your\s(.*?)\sbill/; // 'towards MEDPLUS KONNENA AGRAHA on 09-02'
-
-
-                        console.log('-> snippet: ', plainTextContent);
-                        console.log('-> snippet: cost ', plainTextContent.match(eMandateCostRegex));
-                        console.log('-> snippet: vendor ', plainTextContent.match(eMandateVendorRegex));
-
-                        cost = plainTextContent.match(eMandateCostRegex)[1];
-                        vendor = plainTextContent.match(eMandateVendorRegex)[1];
-
-                        expense = getExpense(Number(res.internalDate), 'upi', mailId);
-                        expense.costType = 'debit';
-
-                    } else {
-                        console.log("Email body is not a HTML type ");
-                    }
+            let subStringFound = true;
+            for (const subString of config.snippetStrings) {
+                if (!snippet.includes(subString)) {
+                    subStringFound = false;
+                    break;
                 }
             }
 
-        } else if (snippet.includes('debited from your HDFC Bank Credit Card ending')) {
+            if (subStringFound) {
+                type = config.type;
+                try {
+                    console.log('-> Matched config strings: ', config.snippetStrings);
 
-            // const CREDIT_CARD_MSG = Dear Customer, Greetings from HDFC Bank! Rs.782.88 is debited from your HDFC Bank
-            // Credit Card ending 5667 towards TechMash Solutions Pri on 10 Aug, 2025 at 12:21:54. If you did not authorize this
+                    // Iterate through costRegex array until a valid number is found
+                    cost = null;
+                    for (const costRegexPattern of config.costRegex) {
+                        try {
+                            const costMatch = snippet.match(new RegExp(costRegexPattern));
+                            if (costMatch && costMatch[1]) {
+                                const parsedCost = Number(costMatch[1]);
+                                if (!isNaN(parsedCost) && parsedCost > 0) {
+                                    cost = costMatch[1];
+                                    break;
+                                }
+                            }
+                        } catch (regexError) {
+                            console.log('-> Cost regex failed:', costRegexPattern, regexError.message);
+                        }
+                    }
 
-            type = 'credit-card'
-            const creditCardCostRegex = /Rs\b\W\b.+ is debited/g; // 'Rs 24.00 at'
-            const creditCardVendorRegex = /towards\s(.*?)\son/; // 'towards MEDPLUS KONNENA AGRAHA on 09-02'
+                    // Iterate through vendorRegex array until a non-null match is found
+                    vendor = null;
+                    for (const vendorRegexPattern of config.vendorRegex) {
+                        try {
+                            const vendorMatch = snippet.match(new RegExp(vendorRegexPattern));
+                            if (vendorMatch && vendorMatch[1] && vendorMatch[1].trim()) {
+                                vendor = vendorMatch[1];
+                                break;
+                            }
+                        } catch (regexError) {
+                            console.log('-> Vendor regex failed:', vendorRegexPattern, regexError.message);
+                        }
+                    }
 
+                    // Only proceed if both cost and vendor were successfully extracted
+                    if (cost !== null && vendor !== null) {
+                        expense = getExpense(Number(res.internalDate), config.type, mailId);
+                        expense.costType = config.costType;
 
-            console.log('-> snippet: ', snippet);
-            console.log('-> snippet: cost ', snippet.match(creditCardCostRegex));
-            console.log('-> snippet: vendor ', snippet.match(creditCardVendorRegex));
+                        console.log('-> Cost: ', cost);
+                        console.log('-> Vendor: ', vendor);
 
+                        expense.cost = Number(cost)
+                        expense.vendor = vendor.toUpperCase().substring(0, 50);
 
-            cost = snippet.match(creditCardCostRegex)[0].replace('Rs.', '').replace(' is debited', '');
-            vendor = snippet.match(creditCardVendorRegex)[0].replace('towards ', '').replace(' on', '');
+                        const obj = vendorTag.find(({vendor}) => expense.vendor === vendor);
 
+                        if (obj) {
+                            expense.tag = obj.tag;
+                        }
 
-            expense = getExpense(Number(res.internalDate), 'credit', mailId);
-            expense.costType = 'debit';
+                        await addExpense(expense, accessToken);
 
-        } else if (snippet.includes('Your UPI transaction')) {
+                        console.log('-> ', type.toUpperCase(), ' cost: ', expense.cost);
+                        console.log('-> ', type.toUpperCase(), ' vendor: ', expense.vendor);
+                        console.log('-> ', type.toUpperCase(), ' expense: ', expense);
+                    } else {
+                        console.log('-> Failed to extract valid cost or vendor from snippet');
+                    }
 
-
-            if (snippet.includes('successfully credited')) {
-
-                // const UPI_MSG_CREDIT = 'Dear Customer, Rs.85.00 is successfully credited to your account \
-                // **1811 by VPA aayushXYZ@okaxis AYUSH SHARMA on 09-02-25. Your UPI \
-                // transaction reference number is 5048888888. Thank you for';
-
-                type = 'upi';
-
-                const upiCreditCostRegex = /Rs\b\W\b.+ is successfully/g; // 'Rs.85.00 is successfully'
-                const upiCreditVendorRegex = /VPA\s(.*?)\son/; // 'VPA aayushXYZ@okaxis AYUSH SHARMA on 09-02'
-
-                snippet = snippet.replace('Rs. ', 'Rs.');
-                console.log('-> snippet: ', snippet);
-                console.log('-> snippet: cost ', snippet.match(upiCreditCostRegex));
-                console.log('-> snippet: vendor ', snippet.match(upiCreditVendorRegex));
-
-                cost = snippet.match(upiCreditCostRegex)[0].replace('Rs.', '').replace(' is successfully', '');
-                vendor = snippet.match(upiCreditVendorRegex)[0].replace('VPA ', '').replace(' on','');
-
-                expense = getExpense(Number(res.internalDate), 'upi', mailId);
-                expense.costType = 'credit';
-
-            } else {
-
-
-                // const UPI_MSG_DEBIT = 'Dear Customer, Rs.10.00 has been debited from account **1811 \
-                // to VPA yash-1@okicici YASH R ABC on 09-02-25.\
-                // Your UPI transaction reference number is 5048888888. If you did not'
-
-                type = 'upi';
-
-                const upiDebitCostRegex = /Rs\b\W\b.+ has been/g; // 'Rs.11.00 has been'
-                const upiDebitVendorRegex = /VPA\s(.*?)\son/; // 'VPA yash-1@okicici YASH R ABC on 10-02'
-
-                console.log('-> snippet: ', snippet);
-                console.log('-> snippet: cost ', snippet.match(upiDebitCostRegex));
-                console.log('-> snippet: vendor ', snippet.match(upiDebitVendorRegex));
-
-                cost = snippet.match(upiDebitCostRegex)[0].replace('Rs.', '').replace(' has been', '');
-                vendor = snippet.match(upiDebitVendorRegex)[0].replace('VPA ', '').replace(' on', '');
-
-                expense = getExpense(Number(res.internalDate), 'upi', mailId);
-                expense.costType = 'debit';
+                } catch (e) {
+                    console.error('Error parsing snippet with config: ', config, e);
+                }
+                break; // Exit the loop after the first matching config
             }
 
-        }
 
-        if (expense !== null) {
-
-            expense.cost = Number(cost)
-            expense.vendor = vendor.toUpperCase().substring(0,50);
-
-            const obj = vendorTag.find(({vendor}) => expense.vendor === vendor);
-
-            if (obj) {
-                expense.tag = obj.tag;
-            }
-
-            await addExpense(expense, accessToken);
-
-            console.log('-> ', type, ' cost: ', expense.cost);
-            console.log('-> ', type, ' vendor: ', expense.vendor);
-            console.log('-> ', type, ' expense: ', expense);
         }
 
 
