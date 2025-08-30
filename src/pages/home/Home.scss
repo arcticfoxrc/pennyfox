@@ -12,8 +12,7 @@ GNU General Public License for more details, or get a copy at
 <https://www.gnu.org/licenses/gpl-3.0.txt>.
 */
 
-
-@import '../../styles/theme.scss';
+@use '../../styles/theme.scss';
 
 .home-root {
     background: var(--bg-primary);
