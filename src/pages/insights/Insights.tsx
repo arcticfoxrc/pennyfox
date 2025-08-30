@@ -451,105 +451,114 @@ const Insights: React.FC = () => {
         </motion.div>
       </Stack>
 
-      {/* Line Graph / Pie Chart based on selected chart type */}
-      <Box className="line-chart-container">
-        {lineChartData.length > 0 ? (
-          <Paper className="chart-paper" elevation={3}>
-            <Typography variant="subtitle2" className="chart-title">
-              Spending Trends
-            </Typography>
-            <ResponsiveContainer width="100%" height="95%">
-              <LineChart
-                data={lineChartData}
-                margin={{top: 5, right: 20, left: 10, bottom: 5}}
-              >
-                <CartesianGrid strokeDasharray="3 3" stroke={theme.palette.divider}/>
-                <XAxis
-                  dataKey="date"
-                  stroke={theme.palette.text.secondary}
-                  tick={{fontSize: 12}}
-                  tickLine={{stroke: theme.palette.divider}}
-                />
-                <YAxis
-                  stroke={theme.palette.text.secondary}
-                  tick={{fontSize: 12}}
-                  tickLine={{stroke: theme.palette.divider}}
-                  width={50}
-                  tickFormatter={(value) => `₹${value}`}
-                  domain={['auto', 'auto']}
-                  allowDataOverflow={false}
-                />
-                <Tooltip
-                  contentStyle={{
-                    backgroundColor: theme.palette.background.paper,
-                    border: `1px solid ${theme.palette.divider}`,
-                    borderRadius: '8px'
-                  }}
-                />
-                <Legend
-                  verticalAlign="bottom"
-                  wrapperStyle={{fontSize: '12px', whiteSpace: 'normal'}}
-                  formatter={(value) => truncate(value, 20)}
-                />
-                {lineKeys.map((key, index) => (
-                  <Line
-                    key={key}
-                    type="monotone"
-                    dataKey={key}
-                    stroke={lineColors[index % lineColors.length]}
-                    activeDot={{r: 8}}
-                    strokeWidth={2}
-                    dot={{strokeWidth: 2}}
+      {/* Chart rendering based on groupBy selection */}
+      {selectedGroupBy === 'days' ? (
+        // Show Line Chart when groupBy is 'days'
+        <Box className="line-chart-container">
+          {lineChartData.length > 0 ? (
+            <Paper className="chart-paper" elevation={3}>
+              <Typography variant="subtitle2" className="chart-title">
+                Spending Trends
+              </Typography>
+              <ResponsiveContainer width="100%" height="95%">
+                <LineChart
+                  data={lineChartData}
+                  margin={{top: 5, right: 20, left: 10, bottom: 5}}
+                >
+                  <CartesianGrid strokeDasharray="3 3" stroke={theme.palette.divider}/>
+                  <XAxis
+                    dataKey="date"
+                    stroke={theme.palette.text.secondary}
+                    tick={{fontSize: 12}}
+                    tickLine={{stroke: theme.palette.divider}}
                   />
-                ))}
-              </LineChart>
-            </ResponsiveContainer>
-          </Paper>
+                  <YAxis
+                    stroke={theme.palette.text.secondary}
+                    tick={{fontSize: 12}}
+                    tickLine={{stroke: theme.palette.divider}}
+                    width={50}
+                    tickFormatter={(value) => `₹${value}`}
+                    domain={['auto', 'auto']}
+                    allowDataOverflow={false}
+                  />
+                  <Tooltip
+                    contentStyle={{
+                      backgroundColor: theme.palette.background.paper,
+                      border: `1px solid ${theme.palette.divider}`,
+                      borderRadius: '8px'
+                    }}
+                  />
+                  <Legend
+                    verticalAlign="bottom"
+                    wrapperStyle={{fontSize: '12px', whiteSpace: 'normal'}}
+                    formatter={(value) => truncate(value, 20)}
+                  />
+                  {lineKeys.map((key, index) => (
+                    <Line
+                      key={key}
+                      type="monotone"
+                      dataKey={key}
+                      stroke={lineColors[index % lineColors.length]}
+                      activeDot={{r: 8}}
+                      strokeWidth={2}
+                      dot={{strokeWidth: 2}}
+                    />
+                  ))}
+                </LineChart>
+              </ResponsiveContainer>
+            </Paper>
+          ) : (
+            <Paper className="chart-paper empty-chart" elevation={3}>
+              <Typography variant="body1" color="text.secondary">
+                No data available for the selected filters
+              </Typography>
+            </Paper>
+          )}
+        </Box>
+      ) : (
+        // Show Pie Chart when groupBy is not 'days'
+        pieChartData.length > 0 ? (
+          <Box className="pie-chart-container">
+            <Paper className="chart-paper" elevation={3}>
+              <Typography variant="subtitle2" className="chart-title">
+                Group Distribution
+              </Typography>
+              <ResponsiveContainer width="100%" height={330}>
+                <PieChart>
+                  <Pie
+                    data={pieChartData}
+                    dataKey="value"
+                    nameKey="name"
+                    cx="50%"
+                    cy="50%"
+                    style={{marginTop: 20}}
+                    outerRadius={100}
+                    fill={theme.palette.primary.main}
+                    label={(entry) => `₹${Math.round(Number(entry.value) || 0)}`}
+                  >
+                    {pieChartData.map((_entry, index) => (
+                      <Cell
+                        key={`cell-${index}`}
+                        fill={lineColors[index % lineColors.length]}
+                      />
+                    ))}
+                  </Pie>
+                  <Legend
+                    verticalAlign="bottom"
+                    wrapperStyle={{fontSize: '12px', whiteSpace: 'normal'}}
+                    formatter={(value) => truncate(value, 20)}
+                  />
+                </PieChart>
+              </ResponsiveContainer>
+            </Paper>
+          </Box>
         ) : (
           <Paper className="chart-paper empty-chart" elevation={3}>
             <Typography variant="body1" color="text.secondary">
               No data available for the selected filters
             </Typography>
           </Paper>
-        )}
-      </Box>
-
-      {/* Pie Chart */}
-      {selectedGroupBy !== 'days' && pieChartData.length > 0 && (
-        <Box className="pie-chart-container">
-          <Paper className="chart-paper" elevation={3}>
-            <Typography variant="subtitle2" className="chart-title">
-              Group Distribution
-            </Typography>
-            <ResponsiveContainer width="100%" height={330}>
-              <PieChart>
-                <Pie
-                  data={pieChartData}
-                  dataKey="value"
-                  nameKey="name"
-                  cx="50%"
-                  cy="50%"
-                  style={{marginTop: 20}}
-                  outerRadius={100}
-                  fill={theme.palette.primary.main}
-                  label={(entry) => `₹${Math.round(Number(entry.value) || 0)}`}
-                >
-                  {pieChartData.map((_entry, index) => (
-                    <Cell
-                      key={`cell-${index}`}
-                      fill={lineColors[index % lineColors.length]}
-                    />
-                  ))}
-                </Pie>
-                <Legend
-                  verticalAlign="bottom"
-                  wrapperStyle={{fontSize: '12px', whiteSpace: 'normal'}}
-                  formatter={(value) => truncate(value, 20)}
-                />
-              </PieChart>
-            </ResponsiveContainer>
-          </Paper>
-        </Box>
+        )
       )}
 
       {/* Info Banner */}
