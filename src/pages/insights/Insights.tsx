@@ -323,7 +323,7 @@ const Insights: React.FC = () => {
       }
     });
 
-    // Use selectedItems if available, otherwise fall back to top 3
+    // Use selectedItems if available, otherwise fall back to top 5
     let targetGroups: string[];
     if (selectedItems.length > 0) {
       targetGroups = selectedItems.filter(item => groupMetrics.has(item));
@@ -338,7 +338,7 @@ const Insights: React.FC = () => {
       if (groupBy === 'tags') {
         uniqueGroups = uniqueGroups.filter(group => group !== 'Untagged');
       }
-      targetGroups = uniqueGroups.slice(0, 3);
+      targetGroups = uniqueGroups.slice(0, 5);
     }
 
     const pieChartData = targetGroups.map(group => {
@@ -415,9 +415,9 @@ const Insights: React.FC = () => {
       const items = getAvailableItems(filtered, selectedGroupBy);
       setAvailableItems(items);
 
-      // Auto-select top 3 items if no items are selected
+      // Auto-select top 5 items if no items are selected
       if (selectedItems.length === 0 && items.length > 0) {
-        setSelectedItems(items.slice(0, 3));
+        setSelectedItems(items.slice(0, 5));
       }
     } else {
       setAvailableItems([]);
