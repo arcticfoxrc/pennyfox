@@ -595,9 +595,20 @@ const Insights: React.FC = () => {
         pieChartData.length > 0 ? (
           <Box className="pie-chart-container">
             <Paper className="chart-paper" elevation={3}>
-              <Typography variant="subtitle2" className="chart-title">
-                Group Distribution
-              </Typography>
+              <div className="chart-header">
+                <Typography variant="subtitle2" className="chart-title">
+                  Group Distribution
+                </Typography>
+                {/* Selection Button - Moved to right side of title */}
+                <div className="selection-button-inline">
+                  <IconButton
+                    onClick={toggleSelectionPanel}
+                    size="small"
+                  >
+                    <TuneIcon />
+                  </IconButton>
+                </div>
+              </div>
               <ResponsiveContainer width="100%" height={330}>
                 <PieChart>
                   <Pie
@@ -680,9 +691,9 @@ const Insights: React.FC = () => {
             startIcon={<FileDownload />}
             onClick={() => exportAsCSV(getFilteredExpenses(), timeRange)}
             sx={{
-              backgroundColor: theme.palette.success.main,
+              backgroundColor: theme.palette.primary.main,
               '&:hover': {
-                backgroundColor: theme.palette.success.dark,
+                backgroundColor: theme.palette.primary.dark,
               },
               borderRadius: 2,
               py: 1,
@@ -702,16 +713,6 @@ const Insights: React.FC = () => {
             clickable
             color="primary"
           />
-        </div>
-
-        {/* Selection Button - Round button between filter and group by */}
-        <div className="selection-button">
-          <IconButton
-            onClick={toggleSelectionPanel}
-            disabled={selectedGroupBy === 'days'}
-          >
-            <TuneIcon />
-          </IconButton>
         </div>
 
 

@@ -100,7 +100,7 @@ GNU General Public License for more details, or get a copy at
 
 
 .pie-chart-container {
-  padding-bottom: 120px;
+  padding-bottom: 20px;
   //height: 300px;
   margin-top: 24px;
 }
@@ -137,6 +137,55 @@ GNU General Public License for more details, or get a copy at
   gap: 12px;
   justify-content: center;
   align-items: center;
+}
+
+/* Chart header styling for title and inline selection button */
+.chart-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+  padding: 0 0 8px 0;
+
+  .chart-title {
+    margin-bottom: 0;
+    font-weight: 500;
+  }
+}
+
+/* Inline selection button styling next to chart title */
+.selection-button-inline {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  .MuiIconButton-root {
+    width: 32px;
+    height: 32px;
+    background-color: var(--accent-blue) !important;
+    color: var(--bg-primary) !important;
+    box-shadow: 0 2px 8px rgba(58, 123, 213, 0.3);
+    border: 1px solid rgba(var(--accent-blue-rgb, 144, 202, 249), 0.3);
+    transition: all 0.3s ease;
+
+    &:hover {
+      background-color: var(--accent-blue) !important;
+      transform: scale(1.1);
+      box-shadow: 0 4px 12px rgba(58, 123, 213, 0.4);
+    }
+
+    &:disabled {
+      background-color: var(--bg-secondary) !important;
+      color: var(--text-secondary) !important;
+      transform: none;
+      box-shadow: none;
+      border-color: var(--border-color);
+    }
+
+    .MuiSvgIcon-root {
+      font-size: 18px;
+    }
+  }
 }
 
 .filter-button, .group-by-button {
@@ -232,13 +281,11 @@ GNU General Public License for more details, or get a copy at
       color: var(--accent-blue);
       background-color: rgba(var(--accent-blue-rgb, 144, 202, 249), 0.12);
       transition: all 0.2s ease;
-      border: 1px solid rgba(var(--accent-blue-rgb, 144, 202, 249), 0.3);
       padding: 4px;
       margin-right: -4px;
 
       &:hover {
         transform: scale(1.1);
-        color: var(--text-white);
         background-color: rgba(var(--accent-blue-rgb, 144, 202, 249), 0.25);
         border-color: rgba(var(--accent-blue-rgb, 144, 202, 249), 0.5);
       }
@@ -367,7 +414,7 @@ GNU General Public License for more details, or get a copy at
     justify-content: flex-start;
     gap: 10px;
     padding: 15px 20px 10px;
-    max-height: 200px;
+    max-height: 400px;
     overflow-y: auto;
 
     .selection-chip {
