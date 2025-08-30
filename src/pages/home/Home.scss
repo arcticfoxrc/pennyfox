@@ -311,6 +311,8 @@ GNU General Public License for more details, or get a copy at
     position: fixed;
     left: 0;
     right: 0;
+    margin: auto;
+    max-width: 600px;
     bottom: 56px;
     background-color: var(--group-header-bg);
     border-top-left-radius: 16px;

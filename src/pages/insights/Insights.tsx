@@ -17,6 +17,7 @@ import {Box, Button, Chip, Container, IconButton, Paper, Stack, Typography, useT
 import {motion} from 'framer-motion';
 import {FileDownload, TrendingDown as TrendingDownIcon, TrendingUp as TrendingUpIcon} from '@mui/icons-material';
 import CloseIcon from '@mui/icons-material/Close';
+import TuneIcon from '@mui/icons-material/Tune';
 import {ExpenseAPI} from '../../api/ExpenseAPI';
 import {sortByKeyDate} from '../../utility/utility';
 import {exportAsCSV, exportAsXLSX} from './exportReport';
@@ -166,14 +167,28 @@ const Insights: React.FC = () => {
   const [selectedGroupBy, setSelectedGroupBy] = useState<GroupByOption>('days');
   const [selectedCalculation, setSelectedCalculation] = useState<CalculationOption>('median');
 
+  // New state for selection panel
+  const [showSelectionPanel, setShowSelectionPanel] = useState(false);
+  const selectionPanelRef = useRef<HTMLDivElement>(null);
+  const [selectedItems, setSelectedItems] = useState<string[]>([]);
+  const [availableItems, setAvailableItems] = useState<string[]>([]);
+
   const toggleFilters = () => {
     setShowFilters(!showFilters);
     if (showGroupByOptions) setShowGroupByOptions(false);
+    if (showSelectionPanel) setShowSelectionPanel(false);
   };
 
   const toggleGroupByOptions = () => {
     setShowGroupByOptions(!showGroupByOptions);
     if (showFilters) setShowFilters(false);
+    if (showSelectionPanel) setShowSelectionPanel(false);
+  };
+
+  const toggleSelectionPanel = () => {
+    setShowSelectionPanel(!showSelectionPanel);
+    if (showFilters) setShowFilters(false);
+    if (showGroupByOptions) setShowGroupByOptions(false);
   };
 
   const handleRangeChange = (range: DateRange) => {
@@ -184,6 +199,8 @@ const Insights: React.FC = () => {
   const handleGroupByChange = (option: GroupByOption) => {
     setSelectedGroupBy(option);
     setShowGroupByOptions(false);
+    // Reset selected items when group by changes
+    setSelectedItems([]);
   };
 
 
@@ -200,10 +217,47 @@ const Insights: React.FC = () => {
     return '₹1000+';
   }, []);
 
+  // Helper function to get available items based on groupBy
+  const getAvailableItems = useCallback((expenses: Expense[], groupBy: GroupByOption): string[] => {
+    if (groupBy === 'days') return [];
+
+    const getGroupKey = (expense: Expense): string => {
+      if (groupBy === 'vendor') return expense.vendor;
+      if (groupBy === 'tags') return expense.tag || 'Untagged';
+      if (groupBy === 'cost') return getCostRange(expense.cost);
+      return '';
+    };
+
+    const groupMetrics = new Map<string, number>();
+    expenses.forEach(expense => {
+      const groupKey = getGroupKey(expense);
+      if (groupKey) {
+        const currentTotal = groupMetrics.get(groupKey) || 0;
+        groupMetrics.set(groupKey, currentTotal + Number(expense.cost));
+      }
+    });
+
+    let uniqueGroups = Array.from(groupMetrics.keys());
+
+    // Sort groups by total spend
+    uniqueGroups.sort((a, b) => {
+      const totalA = groupMetrics.get(a) || 0;
+      const totalB = groupMetrics.get(b) || 0;
+      return totalB - totalA;
+    });
+
+    if (groupBy === 'tags') {
+      uniqueGroups = uniqueGroups.filter(group => group !== 'Untagged');
+    }
+
+    return uniqueGroups;
+  }, [getCostRange]);
+
   const prepareChartData = useCallback((
     expenses: Expense[],
     groupBy: GroupByOption,
-    calculation: CalculationOption
+    calculation: CalculationOption,
+    selectedItems: string[]
   ): {
     lineChartData: LineDataPoint[];
     pieChartData: { name: string; value: number }[];
@@ -269,22 +323,25 @@ const Insights: React.FC = () => {
       }
     });
 
-    let uniqueGroups = Array.from(groupMetrics.keys());
+    // Use selectedItems if available, otherwise fall back to top 3
+    let targetGroups: string[];
+    if (selectedItems.length > 0) {
+      targetGroups = selectedItems.filter(item => groupMetrics.has(item));
+    } else {
+      let uniqueGroups = Array.from(groupMetrics.keys());
+      uniqueGroups.sort((a, b) => {
+        const totalA = groupMetrics.get(a)!.reduce((sum, val) => sum + val, 0);
+        const totalB = groupMetrics.get(b)!.reduce((sum, val) => sum + val, 0);
+        return totalB - totalA;
+      });
 
-    // Sort groups by total spend (default)
-    uniqueGroups.sort((a, b) => {
-      const totalA = groupMetrics.get(a)!.reduce((sum, val) => sum + val, 0);
-      const totalB = groupMetrics.get(b)!.reduce((sum, val) => sum + val, 0);
-      return totalB - totalA;
-    });
-
-    if (groupBy === 'tags') {
-      uniqueGroups = uniqueGroups.filter(group => group !== 'Untagged');
+      if (groupBy === 'tags') {
+        uniqueGroups = uniqueGroups.filter(group => group !== 'Untagged');
+      }
+      targetGroups = uniqueGroups.slice(0, 3);
     }
 
-    const topGroups = uniqueGroups.slice(0, 3);
-
-    const pieChartData = topGroups.map(group => {
+    const pieChartData = targetGroups.map(group => {
       const values = groupMetrics.get(group) || [0];
       const totalValue = values.reduce((sum, val) => sum + val, 0);
       return {
@@ -300,7 +357,7 @@ const Insights: React.FC = () => {
     const newLineChartData = dates.map((date, index) => {
       const dataPoint: LineDataPoint = {date};
 
-      topGroups.forEach(group => {
+      targetGroups.forEach(group => {
         // Get data for the last 7 days for rolling calculation
         const rollingDates = dates.slice(Math.max(0, index - 6), index + 1);
         const groupValues: number[] = [];
@@ -329,7 +386,7 @@ const Insights: React.FC = () => {
       return dataPoint;
     });
 
-    return {lineChartData: newLineChartData, pieChartData, lineKeys: topGroups};
+    return {lineChartData: newLineChartData, pieChartData, lineKeys: targetGroups};
   }, [getCostRange]);
 
   const [lineChartData, setLineChartData] = useState<LineDataPoint[]>([]);
@@ -342,13 +399,31 @@ const Insights: React.FC = () => {
     const {lineChartData, pieChartData, lineKeys} = prepareChartData(
       filteredExpenses,
       selectedGroupBy,
-      selectedCalculation
+      selectedCalculation,
+      selectedItems // Pass selectedItems to prepareChartData
     );
 
     setLineChartData(lineChartData);
     setPieChartData(pieChartData);
     setLineKeys(lineKeys);
-  }, [expenses, timeRange, selectedGroupBy, selectedCalculation, getFilteredExpenses, prepareChartData]);
+  }, [expenses, timeRange, selectedGroupBy, selectedCalculation, getFilteredExpenses, prepareChartData, selectedItems]);
+
+  // Update available items when groupBy or expenses change
+  useEffect(() => {
+    if (selectedGroupBy !== 'days') {
+      const filtered = getFilteredExpenses();
+      const items = getAvailableItems(filtered, selectedGroupBy);
+      setAvailableItems(items);
+
+      // Auto-select top 3 items if no items are selected
+      if (selectedItems.length === 0 && items.length > 0) {
+        setSelectedItems(items.slice(0, 3));
+      }
+    } else {
+      setAvailableItems([]);
+      setSelectedItems([]);
+    }
+  }, [selectedGroupBy, expenses, timeRange, getFilteredExpenses, getAvailableItems, selectedItems.length]);
 
   if (isLoading) {
     return <Loading/>;
@@ -605,9 +680,9 @@ const Insights: React.FC = () => {
             startIcon={<FileDownload />}
             onClick={() => exportAsCSV(getFilteredExpenses(), timeRange)}
             sx={{
-              backgroundColor: theme.palette.primary.main,
+              backgroundColor: theme.palette.success.main,
               '&:hover': {
-                backgroundColor: theme.palette.primary.dark,
+                backgroundColor: theme.palette.success.dark,
               },
               borderRadius: 2,
               py: 1,
@@ -628,6 +703,18 @@ const Insights: React.FC = () => {
             color="primary"
           />
         </div>
+
+        {/* Selection Button - Round button between filter and group by */}
+        <div className="selection-button">
+          <IconButton
+            onClick={toggleSelectionPanel}
+            disabled={selectedGroupBy === 'days'}
+          >
+            <TuneIcon />
+          </IconButton>
+        </div>
+
+
         <div className="group-by-button" ref={groupByButtonRef} onClick={toggleGroupByOptions}>
           <Chip
             icon={<SortIcon/>}
@@ -656,6 +743,16 @@ const Insights: React.FC = () => {
         onGroupByChange={handleGroupByChange}
         onCalculationChange={handleCalculationChange}
         panelRef={groupByPanelRef}
+      />
+
+      {/* Selection Panel - New Component */}
+      <SelectionPanel
+        show={showSelectionPanel}
+        onClose={() => setShowSelectionPanel(false)}
+        selectedItems={selectedItems}
+        onItemsChange={setSelectedItems}
+        availableItems={availableItems}
+        panelRef={selectionPanelRef}
       />
 
     </Container>
@@ -731,6 +828,7 @@ const GroupByPanel: React.FC<{
           ))}
         </div>
       </div>
+
       <div className="panel-section">
         <div className="section-title">Calculation</div>
         <div className="group-by-options">
@@ -745,6 +843,49 @@ const GroupByPanel: React.FC<{
             />
           ))}
         </div>
+      </div>
+    </div>
+  );
+};
+
+// Selection Panel Component - New
+const SelectionPanel: React.FC<{
+  show: boolean;
+  onClose: () => void;
+  selectedItems: string[];
+  onItemsChange: (items: string[]) => void;
+  availableItems: string[];
+  panelRef: React.RefObject<HTMLDivElement>;
+}> = ({show, onClose, selectedItems, onItemsChange, availableItems, panelRef}) => {
+  if (!show) return null;
+
+  const handleItemToggle = (item: string) => {
+    if (selectedItems.includes(item)) {
+      onItemsChange(selectedItems.filter(i => i !== item));
+    } else {
+      onItemsChange([...selectedItems, item]);
+    }
+  };
+
+  return (
+    <div className="selection-panel" ref={panelRef}>
+      <div className="panel-header">
+        <span className="panel-title">Select Items</span>
+        <IconButton size="small" className="close-button" onClick={onClose}>
+          <CloseIcon/>
+        </IconButton>
+      </div>
+      <div className="selection-options">
+        {availableItems.map(item => (
+          <Chip
+            key={item}
+            label={item}
+            color={selectedItems.includes(item) ? "primary" : "default"}
+            variant={selectedItems.includes(item) ? "filled" : "outlined"}
+            onClick={() => handleItemToggle(item)}
+            className="selection-chip"
+          />
+        ))}
       </div>
     </div>
   );
