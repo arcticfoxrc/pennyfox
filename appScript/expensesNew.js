@@ -64,9 +64,45 @@ async function myExpenseFunction() {
 
     // return;
 
-    const emailParsingConfig = JSON.parse(UrlFetchApp.fetch(
-        'https://raw.githubusercontent.com/arcticfoxrc/pennyfox/main/appScript/emailParsingConfig.json'
-    ).getContentText());
+    // const emailParsingConfig = JSON.parse(UrlFetchApp.fetch(
+    //     'https://raw.githubusercontent.com/arcticfoxrc/pennyfox/main/appScript/emailParsingConfig.json'
+    // ).getContentText());
+
+    const emailParsingConfig = {
+        "v1": {
+            "description": "HDFC Bank E-mandate, Credit Card and UPI transactions",
+            "config": [
+                {
+                    "snippetStrings": ["debited from your HDFC Bank Credit Card ending"],
+                    "costRegex": "Rs\\.(.*?)\\sis debited",
+                    "vendorRegex": "towards\\s(.*?)\\son",
+                    "type": "credit-card",
+                    "costType": "debit"
+                },
+                {
+                    "snippetStrings": ["Your UPI transaction", "successfully credited"],
+                    "costRegex": "\\.(.*?)\\ is successfully credited",
+                    "vendorRegex": "VPA\\s(.*?)\\son",
+                    "type": "upi",
+                    "costType": "credit"
+                },
+                {
+                    "snippetStrings": ["Your UPI transaction"],
+                    "costRegex": "Rs\\.(.*?)\\shas been debited",
+                    "vendorRegex": "VPA\\s(.*?)\\son",
+                    "type": "upi",
+                    "costType": "debit"
+                },
+                {
+                    "snippetStrings": ["E-mandate", "has been successfully paid"],
+                    "costRegex": "Amount: INR\\s(.*?)\\sDate",
+                    "vendorRegex": "Your\\s(.*?)\\sbill",
+                    "type": "e-mandate",
+                    "costType": "debit"
+                }
+            ]
+        }
+    };
 
     for (const mailIndex in mailIdList) {
         let mailId = mailIdList[mailIndex];
@@ -77,8 +113,8 @@ async function myExpenseFunction() {
 
         console.log("Email snippet ", snippet);
 
-        for (const hdfcIndex in emailParsingConfig.hdfc) {
-            const config = emailParsingConfig.hdfc[hdfcIndex];
+        for (const hdfcIndex in emailParsingConfig.v1.config) {
+            const config = emailParsingConfig.v1.config[hdfcIndex];
 
             let expense = null;
             let type = '';
@@ -96,7 +132,7 @@ async function myExpenseFunction() {
             if (subStringFound) {
                 type = config.type;
                 try {
-                    console.log('-> Matched config: ', config);
+                    console.log('-> Matched config strings: ', config.snippetStrings);
                     cost = snippet.match(new RegExp(config.costRegex))[1];
                     vendor = snippet.match(new RegExp(config.vendorRegex))[1];
 
