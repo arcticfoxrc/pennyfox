@@ -39,7 +39,7 @@ interface AddExpenseModalProps {
 }
 
 const AddExpense: FC<AddExpenseModalProps> = ({open, onClose, onExpenseAdded}): ReactElement => {
-  const [selectedTag, setSelectedTag] = useState<string>("");
+  const [selectedTag, setSelectedTag] = useState<string>("untagged");
   const [cost, setCost] = useState<string>("");
 
   // Get tag list from the store
@@ -154,7 +154,7 @@ const AddExpense: FC<AddExpenseModalProps> = ({open, onClose, onExpenseAdded}): 
       <DialogActions className="tag-expense-dialog-actions">
         <Button
           variant="contained"
-          disabled={selectedTag === "" || cost === "0" || isNaN(parseFloat(cost))}
+          disabled={cost === "0" || isNaN(parseFloat(cost))}
           onClick={onSaveExpense}
           className="tag-save-btn"
         >

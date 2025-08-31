@@ -38,10 +38,13 @@ export class ExpenseAPI {
 
         try {
 
+            // console.log('Creating expense...', expense);
+
             let key = getDateJsIdFormat(new Date(expense.date)) + ' ' + expense.vendor.slice(0, 10);
             // console.debug("Document written with expense: ", JSONCopy(expense));
 
             expense.modifiedDate = Date.now(); // date to epoch
+            expense.cost = Number(expense.cost.toFixed(2)); 
 
             const docRef = doc(db, "expense", key);
             const {id, ...expenseWithoutId} = expense;
@@ -49,8 +52,11 @@ export class ExpenseAPI {
 
             await FinanceIndexDB.addExpenseList([expense]);
 
-            expense["id"] = key;
-            return expense;
+            // Return a new object with the updated ID instead of modifying the original
+            return {
+                ...expense,
+                id: key
+            };
 
         } catch (e) {
             ErrorHandlers.handleApiError(e);
