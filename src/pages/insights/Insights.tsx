@@ -50,6 +50,7 @@ import {
   XAxis,
   YAxis
 } from "recharts";
+import {CHART_COLORS} from "../../utility/constants";
 
 // Interface for line graph data
 interface LineDataPoint {
@@ -429,13 +430,14 @@ const Insights: React.FC = () => {
     return <Loading/>;
   }
 
-  // Line colors for the chart
+  // Line colors for the chart - Extended to support 15+ different colors
   const lineColors = [
-    theme.palette.primary.main,
-    theme.palette.secondary.main,
-    theme.palette.error.main,
-    theme.palette.success.main,
-    theme.palette.warning.main
+    theme.palette.primary.main,      // Blue
+    theme.palette.secondary.main,    // Purple/Pink
+    theme.palette.error.main,        // Red
+    theme.palette.success.main,      // Green
+    theme.palette.warning.main,      // Orange/Yellow
+    ...CHART_COLORS
   ];
 
   return (
