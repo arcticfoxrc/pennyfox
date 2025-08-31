@@ -486,7 +486,7 @@ const Insights: React.FC = () => {
         >
           <Paper className="daily-card">
             <Typography variant="subtitle2" color="rgba(255,255,255,0.7)">
-              Daily Average
+              Daily {selectedCalculation === 'average' ? 'Average' : 'Median'}
             </Typography>
             <Box>
               <Typography variant="h4" fontSize={22} fontWeight="bold" color="white">
@@ -511,7 +511,7 @@ const Insights: React.FC = () => {
         >
           <Paper className="monthly-card">
             <Typography variant="subtitle2" color="rgba(255,255,255,0.7)">
-              Monthly Average
+              Monthly {selectedCalculation === 'average' ? 'Average' : 'Median'}
             </Typography>
             <Box>
               <Typography variant="h4" fontSize={22} fontWeight="bold" color="white">
@@ -521,7 +521,7 @@ const Insights: React.FC = () => {
             <Box>
               <TrendingDownIcon sx={{fontSize: 16, color: 'rgba(255,255,255,0.7)', mr: 0.5}}/>
               <Typography variant="caption" color="rgba(255,255,255,0.7)">
-                {timeRange === '7d' || timeRange === '30d' ? 'Same as Daily Avg' : 'Per Month'}
+                {timeRange === '7d' || timeRange === '30d' ? `Same as Daily ${selectedCalculation === 'average' ? 'Avg' : 'Median'}` : 'Per Month'}
               </Typography>
             </Box>
           </Paper>
