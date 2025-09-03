@@ -22,8 +22,8 @@ First complete the setup instructions in the [Setup Documentation](./public/docs
 
 1.  **Clone the Repository**:
     ```bash
-    git clone https://github.com/your-username/pennyfox.git
-    cd pennyfox
+    git clone https://github.com/your-username/pennywise.git
+    cd pennywise
     ```
 2.  **Install Dependencies**:
     ```bash
@@ -83,12 +83,12 @@ We follow a simplified version of Gitflow, which is well-suited for open-source 
 
 ### Contribution Guidelines
 
-1.  **Fork the Repository**: Start by forking the PennyFox repository to your GitHub account.
+1.  **Fork the Repository**: Start by forking the Pennywise repository to your GitHub account.
 2.  **Create a Branch**: Create a new branch for your feature or bug fix, following the naming convention (`feature/your-feature-name` or `bugfix/your-bug-fix`).
 3.  **Make Changes**: Implement your changes, ensuring that the code is well-documented and follows our coding standards.
 4.  **Test Your Changes**: Thoroughly test your changes to ensure they work as expected and don't introduce any new issues.
 5.  **Commit Your Changes**: Commit your changes with clear and concise commit messages.
-6.  **Create a Pull Request**: Create a pull request (PR) from your branch to the `develop` branch of the PennyFox repository.
+6.  **Create a Pull Request**: Create a pull request (PR) from your branch to the `develop` branch of the Pennywise repository.
 7.  **Code Review**: Your PR will be reviewed by the project maintainers. Address any feedback and make necessary changes.
 8.  **Merge**: Once your PR is approved, it will be merged into the `develop` branch.
 

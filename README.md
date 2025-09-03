@@ -1,6 +1,6 @@
 <div align="center">
   <br/>
-  <img src="public/logo2.png" alt="PennyFox Logo" width="150px" />
+  <img src="public/logo2.png" alt="Pennywise Logo" width="150px" />
   <br />
   <br />
   <strong>Track, Analyze, and Master Your Personal Finances</strong>
@@ -26,7 +26,7 @@
 
 This project is licensed under the [GNU General Public License v3.0](LICENSE).
 
-> **Disclaimer:** Currently, PennyFox only supports transaction tracking for below
+> **Disclaimer:** Currently, Pennywise only supports transaction tracking for below
 > * HDFC UPI - credit & debit transactions.
 > * HDFC Credit card - only debit transactions.
 > * HDFC E-mandate transactions.
@@ -35,9 +35,9 @@ This project is licensed under the [GNU General Public License v3.0](LICENSE).
 
 ## Overview
 
-PennyFox is a comprehensive, open-source web application designed to empower individuals in managing their personal
+Pennywise is a comprehensive, open-source web application designed to empower individuals in managing their personal
 finances. It provides an intuitive platform to track, categorize, and visualize expenses, helping users gain clear
-insights into their spending patterns and achieve financial mastery. Built with modern web technologies, PennyFox offers
+insights into their spending patterns and achieve financial mastery. Built with modern web technologies, Pennywise offers
 a user-friendly experience with robust features, including offline support and secure authentication.
 
 ## Features
@@ -60,12 +60,12 @@ a user-friendly experience with robust features, including offline support and s
 
 <p align="center">
   <a
-    href="https://pennyfoxrc.web.app/"
+    href="https://pennywiserc.web.app/"
     target="_blank"
     rel="noopener noreferrer"
     style="display: inline-block; padding: 10px 20px; background-color: #4CAF50; color: white; text-decoration: none; border-radius: 5px;"
    >
-    Explore PennyFox Demo App
+    Explore Pennywise Demo App
   </a>
 </p>
 
@@ -83,19 +83,19 @@ For detailed setup instructions, please refer below guide (30-60 min setup time)
 
 ## Security & Cost
 
-PennyFox is designed with your data privacy and security as a top priority. Unlike many other financial apps, PennyFox
+Pennywise is designed with your data privacy and security as a top priority. Unlike many other financial apps, Pennywise
 gives you complete control over your data and infrastructure. Here’s what makes our approach to security different:
 
 * **🔒 You Own Your Data**: Your financial data is yours alone. It is stored in your own Google Firebase Firestore
   instance, not on our servers. You have full control over who can access it.
 
-* **☁️ Self-Hosted on Your Google Cloud**: You deploy PennyFox on your personal Google Cloud project. This means you
+* **☁️ Self-Hosted on Your Google Cloud**: You deploy Pennywise on your personal Google Cloud project. This means you
   manage the entire infrastructure, ensuring that you are the only one with access to the backend services and database.
 
-* **💸 No Hidden Costs**: PennyFox is open-source and free to use. You only pay for what you use on the Google Cloud
+* **💸 No Hidden Costs**: Pennywise is open-source and free to use. You only pay for what you use on the Google Cloud
   Platform, which offers a generous free tier for Firebase and Cloud Functions.
 
-* **🚫 No Ads, No Tracking**: PennyFox is a completely ad-free platform. We do not track your behavior or sell your data
+* **🚫 No Ads, No Tracking**: Pennywise is a completely ad-free platform. We do not track your behavior or sell your data
   to third parties. Our goal is to provide a tool that helps you manage your finances, not to monetize your personal
   information.
 
@@ -105,7 +105,7 @@ gives you complete control over your data and infrastructure. Here’s what make
 * **🔐 Secure Authentication**: We use Google OAuth for authentication, which provides a secure and reliable way to log
   in to your account without us ever seeing or storing your password.
 
-* **🔑 Minimal Permissions**: PennyFox requests only the necessary permissions to function. For instance, the Gmail
+* **🔑 Minimal Permissions**: Pennywise requests only the necessary permissions to function. For instance, the Gmail
   integration is designed to only access emails related to financial transactions, ensuring the privacy of your personal
   correspondence.
 
@@ -116,14 +116,14 @@ gives you complete control over your data and infrastructure. Here’s what make
   and including the infra exposed public internet. This ensures that only authenticated & your mail id requests from
   your application can access your data and services.
 
-By putting you in control of your data and the application's infrastructure, PennyFox offers a transparent and secure
+By putting you in control of your data and the application's infrastructure, Pennywise offers a transparent and secure
 way to manage your personal finances.
 
 For a detailed explanation of the security architecture, please see the [Security Policy](SECURITY.md).
 
 ## Technology Stack
 
-PennyFox leverages a modern and robust set of technologies to deliver a user friendly and maintainable application.
+Pennywise leverages a modern and robust set of technologies to deliver a user friendly and maintainable application.
 
 ### Frontend
 
@@ -156,7 +156,7 @@ PennyFox leverages a modern and robust set of technologies to deliver a user fri
 ## Project Structure
 
 ```
-pennyfox/
+pennywise/
 ├── public/               # Static assets
 ├── src/
 │   ├── api/              # API clients and data fetching
@@ -178,7 +178,7 @@ pennyfox/
 
 ## Architecture
 
-PennyFox is built using a modern front-end architecture with the following key components:
+Pennywise is built using a modern front-end architecture with the following key components:
 
 ### Overview
 
@@ -211,7 +211,7 @@ PennyFox is built using a modern front-end architecture with the following key c
 
 ## Contributing & Local Development
 
-We welcome contributions to PennyFox! If you're interested in helping out, please refer to our [Development Guide](DEVELOP.md) for instructions on setting up the project locally, contributing code, and submitting pull requests.
+We welcome contributions to Pennywise! If you're interested in helping out, please refer to our [Development Guide](DEVELOP.md) for instructions on setting up the project locally, contributing code, and submitting pull requests.
 
 
 ## Support the Project

@@ -72,7 +72,7 @@ const generateFilename = (timeRange: string, fileType: string): string => {
     const rangeLabel = filterOptions.find(opt => opt.id === timeRange)?.label || timeRange;
     const dateStr = getCurrentDate('YYYYMMDD_HHmmss');
 
-    return `Pennyfox_${rangeLabel}_range_${dateStr}.${fileType}`
+    return `Pennywise_${rangeLabel}_range_${dateStr}.${fileType}`
         .replace(' ', '')
         .toLowerCase();
 };

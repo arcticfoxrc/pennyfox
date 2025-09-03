@@ -64,7 +64,7 @@ async function myExpenseFunction() {
     // return;
 
     const emailParsingConfig = JSON.parse(UrlFetchApp.fetch(
-        'https://raw.githubusercontent.com/arcticfoxrc/pennyfox/main/appScript/emailParsingConfig.json'
+        'https://raw.githubusercontent.com/arcticfoxrc/pennywise/main/appScript/emailParsingConfig.json'
     ).getContentText());
 
 

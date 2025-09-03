@@ -258,7 +258,7 @@ const Settings: React.FC = () => {
           variant="caption"
           className="version-text"
         >
-          PennyFox v1.0.0
+          Pennywise v1.0.0
         </Typography>
       </Paper>
     </Container>
