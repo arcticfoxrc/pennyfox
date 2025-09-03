@@ -45,7 +45,7 @@ const Login: React.FC = () => {
                     <Box
                         component="img"
                         src="/logo.png"
-                        alt="Pennyfox logo"
+                        alt="Pennywise logo"
                         sx={{
                             width: 160,
                             height: 160,
@@ -54,7 +54,7 @@ const Login: React.FC = () => {
                         }}
                     />
                     <Typography component="h1" variant="h4" align="center" gutterBottom>
-                        PennyFox
+                        Pennywise
                     </Typography>
 
                     {error && (

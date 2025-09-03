@@ -58,6 +58,7 @@ import AddExpense from './home-views/AddExpense';
 import {ExpenseAPI} from "../../api/ExpenseAPI";
 import {CreditCard, Sort} from "@mui/icons-material";
 import Container from "@mui/material/Container";
+import {useLongPress} from "../../hooks/useLongPress";
 
 // Add interface to extend Window type
 declare global {
@@ -431,47 +432,14 @@ const Home: FC<any> = (): ReactElement => {
     const isSelected = selectedExpenses.some(e => e.id === expense.id);
 
     return (
-      <Row
+      <ExpenseItem
         key={index}
-        className={`expense-row ${isSelected ? 'selected' : ''}`}
-        onClick={(e) => selectionMode ? toggleExpenseSelection(expense, e) : onSetExpense(expense)}
-      >
-        <Avatar
-          className={`expense-avatar ${isSelected ? 'selected' : ''}`}
-          onClick={(e) => toggleExpenseSelection(expense, e)}
-        >
-          {isSelected ?
-            <CheckCircleIcon fontSize="inherit"/> :
-            expense.type === 'credit' ?
-              <CreditCard fontSize="inherit"/> :
-              <CurrencyRupeeIcon fontSize="inherit"/>
-          }
-        </Avatar>
-        <Col>
-          <Row className="expense-row-header">
-            <Col>
-              <span className="vendor-name">{expense.vendor.toLowerCase()}</span>
-            </Col>
-            <Col xs="auto" className='d-flex justify-content-end mr-2'>
-              <span className='expense-type'>
-                {expense.costType === 'debit' ? '-' : '+'}
-              </span>
-              <span className="expense-currency">₹</span>
-              <span className="expense-cost">{expense.cost}</span>
-            </Col>
-          </Row>
-          <Row className="expense-date-row">
-            <span className="expense-date">{getDateMonth(expense.date)}</span>
-          </Row>
-          <Row>
-            <Col>
-              <span className={expense.tag ? 'tag-text-red' : 'tag-text-purple-light'}>
-                {expense.tag ? expense.tag : 'untagged'}
-              </span>
-            </Col>
-          </Row>
-        </Col>
-      </Row>
+        expense={expense}
+        isSelected={isSelected}
+        selectionMode={selectionMode}
+        onSelect={toggleExpenseSelection}
+        onView={onSetExpense}
+      />
     );
   };
 
@@ -804,6 +772,79 @@ const GroupByPanel: FC<{
         </div>
       </div>
     </div>
+  );
+};
+
+// ExpenseItem Component - Separated to properly use hooks
+const ExpenseItem: FC<{
+  expense: Expense;
+  isSelected: boolean;
+  selectionMode: boolean;
+  onSelect: (expense: Expense, e: React.MouseEvent) => void;
+  onView: (expense: Expense) => void;
+}> = ({ expense, isSelected, selectionMode, onSelect, onView }) => {
+
+  // Create a minimal synthetic event object once instead of recreating it in each handler
+  const createSyntheticEvent = useCallback(() => {
+    return { stopPropagation: () => {} } as React.MouseEvent;
+  }, []);
+
+  // Handle long press on expense row - activates selection mode
+  const handleLongPress = useCallback(() => {
+    onSelect(expense, createSyntheticEvent());
+  }, [expense, onSelect, createSyntheticEvent]);
+
+  // Handle regular click - either selects in selection mode or views details
+  const handleClick = useCallback(() => {
+    if (selectionMode) {
+      onSelect(expense, createSyntheticEvent());
+    } else {
+      onView(expense);
+    }
+  }, [expense, selectionMode, onSelect, onView, createSyntheticEvent]);
+
+  // Setup long press gesture handlers
+  const longPressHandlers = useLongPress(handleLongPress, handleClick, { delay: 500 });
+
+
+  return (
+    <Row
+      className={`expense-row ${isSelected ? 'selected' : ''}`}
+      {...longPressHandlers}
+    >
+      <Avatar className={`expense-avatar ${isSelected ? 'selected' : ''}`}>
+        {isSelected ?
+          <CheckCircleIcon fontSize="inherit"/> :
+          expense.type === 'credit-card' ?
+            <CreditCard fontSize="inherit"/> :
+            <CurrencyRupeeIcon fontSize="inherit"/>
+        }
+      </Avatar>
+      <Col>
+        <Row className="expense-row-header">
+          <Col>
+            <span className="vendor-name">{expense.vendor.toLowerCase()}</span>
+          </Col>
+          <Col xs="auto" className='d-flex justify-content-end mr-2'>
+            <span className='expense-type'>
+              {expense.costType === 'debit' ? '-' : '+'}
+            </span>
+            <span className="expense-currency">₹</span>
+            <span className="expense-cost">{expense.cost}</span>
+          </Col>
+        </Row>
+        <Row className="expense-date-row">
+          <span className="expense-date">{getDateMonth(expense.date)}</span>
+        </Row>
+        <Row>
+          <Col>
+            <span className={expense.tag ? 'tag-text-red' : 'tag-text-purple-light'}>
+              {expense.tag ? expense.tag : 'untagged'}
+            </span>
+          </Col>
+        </Row>
+      </Col>
+    </Row>
   );
 };
 

@@ -1,4 +1,4 @@
-# PennyFox Setup
+# Pennywise Setup
 
 This guide will walk you through setting up the Arctic Fox project on a Linux/Microsoft/MacOs environment.
 
@@ -61,17 +61,17 @@ You can get the project files either by cloning the repository using Git or by d
   3. https://code.visualstudio.com/docs/sourcecontrol/intro-to-git#_clone-a-repository-locally
   4. Repository URL mentioned below
    ```bash
-      https://github.com/arcticfoxrc/pennyfox.git 
+      https://github.com/arcticfoxrc/pennywise.git 
    ```
   ![VSCODE](public/docs/pics/vscode.png)
 
 - **With Git:**
   ```bash
-  git clone https://github.com/arcticfoxrc/pennyfox.git
+  git clone https://github.com/arcticfoxrc/pennywise.git
   ```
 - **Direct Download:**
   Alternatively, you can download the project as a ZIP file from the repository's main page and extract it.
-  go to https://github.com/arcticfoxrc/pennyfox, click on Code button, then click on Download ZIP.
+  go to https://github.com/arcticfoxrc/pennywise, click on Code button, then click on Download ZIP.
 
 After cloning or extracting the project, you need to open a terminal and navigate to the project's root directory.
 
@@ -81,7 +81,7 @@ After cloning or extracting the project, you need to open a terminal and navigat
 1.  **Open Terminal:** Right-click the Start button and select **Windows PowerShell** or **Command Prompt**.
 2.  **Navigate to Directory:** Use the `cd` command. For example, if the project is in your `Downloads` folder, run:
     ```cmd
-    cd C:\\Users\\YourUsername\\Downloads\\pennyfox
+    cd C:\\Users\\YourUsername\\Downloads\\pennywise
     ```
 
 </details>
@@ -92,7 +92,7 @@ After cloning or extracting the project, you need to open a terminal and navigat
 1.  **Open Terminal:** Find the Terminal app in `Applications/Utilities` or search for it with Spotlight (`Cmd+Space`).
 2.  **Navigate to Directory:** Use the `cd` command. For example:
     ```bash
-    cd ~/Downloads/pennyfox
+    cd ~/Downloads/pennywise
     ```
 
 </details>
@@ -103,7 +103,7 @@ After cloning or extracting the project, you need to open a terminal and navigat
 1.  **Open Terminal:** Press `Ctrl+Alt+T` or search for "Terminal" in your applications menu.
 2.  **Navigate to Directory:** Use the `cd` command. For example:
     ```bash
-    cd ~/Downloads/pennyfox
+    cd ~/Downloads/pennywise
     ```
 
 </details>
@@ -210,7 +210,7 @@ Here’s how you can install Node.js and npm on different operating systems. We 
    ![Firebase Dashboard](public/docs/pics/ss1.png)
 
 4. **Upgrade to the Blaze Plan:**
-    - By default, your project will be on the "Spark" plan. To enable all features required for PennyFox, you must
+    - By default, your project will be on the "Spark" plan. To enable all features required for Pennywise, you must
       upgrade to the "Blaze" (pay-as-you-go) plan.
     - In the bottom-left corner of the navigation menu, click on the **"Upgrade"** button.
     - Select the **Blaze plan** and follow the prompts to create a Cloud Billing account. This will require a credit
@@ -329,12 +329,12 @@ To interact with Firebase services from your terminal, you need to install the F
      - Add the following content to the file:
      ```javascript
      const PROJECT_ID = 'your-project-id'; // Replace with your actual project ID
-     const USER_ID = 'pennyfox'; // Replace with your actual user ID
+     const USER_ID = 'pennywise'; // Replace with your actual user ID
      const PROJECT_REGION = 'us-central1';
      
      ```
      - Replace `your-project-id` with your actual Firebase project ID.
-     - Replace `pennyfox` with your user if , it will be used in expense JSON in firestore,  you can add your name, nickname or anything which you want to use as user id.
+     - Replace `pennywise` with your user if , it will be used in expense JSON in firestore,  you can add your name, nickname or anything which you want to use as user id.
 
 
 - **Build web app:**
@@ -421,7 +421,7 @@ To interact with Firebase services from your terminal, you need to install the F
 5. **Create a New Apps Script Project:**
     Run the following command to create a new, standalone Apps Script project:
     ```bash
-    clasp create --title "Pennyfox App Script" --type standalone
+    clasp create --title "Pennywise App Script" --type standalone
     ```
    
    6. **Update appsscript.json:**
@@ -466,12 +466,12 @@ To interact with Firebase services from your terminal, you need to install the F
 
 7. **Run the Apps Script Files:**
     - Go to the [Google Apps Script](https://script.google.com) website.
-    - Click on the `Pennyfox App Script` project you just created.
+    - Click on the `Pennywise App Script` project you just created.
     - In the left sidebar, you will see the files `expense.gs` and `trigger.gs`.
     - Click on `trigger.gs` to open it, then click the **Run** button (▶️) at the top of the editor.
     - This will prompt you to authorize the script to access your Gmail account.
     - Authorize the script by selecting your Google account and granting the necessary permissions.
-    - Once you select the mail, you will get a warning page,click on advanced & then click on `Go to Pennyfox App Script (unsafe)`.
+    - Once you select the mail, you will get a warning page,click on advanced & then click on `Go to Pennywise App Script (unsafe)`.
     - Select all permissions and click on **Allow**.
     - This will set up the necessary triggers to fetch emails and add them to Firestore.
     - After running the script, you should see a message indicating that the triggers have been set up successfully.
@@ -483,7 +483,7 @@ To interact with Firebase services from your terminal, you need to install the F
 
 ## Post-Setup Instructions
 
-Congratulations! You have successfully completed the setup for Pennyfox.
+Congratulations! You have successfully completed the setup for Pennywise.
 
 ### Accessing the App
 
@@ -491,7 +491,7 @@ You can now start using the application by navigating to `https://<your-project-
 
 ### Installing as a PWA
 
-For a more native experience, you can install Pennyfox as a Progressive Web App (PWA) directly from Google Chrome on both Android and iOS devices.
+For a more native experience, you can install Pennywise as a Progressive Web App (PWA) directly from Google Chrome on both Android and iOS devices.
 
 ### Automatic Expense Tracking
 

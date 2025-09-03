@@ -1,12 +1,12 @@
 # Security Policy
 
-This document outlines the security measures implemented in PennyFox to protect your data and ensure your privacy. Because you host PennyFox on your own Google Cloud project, you have complete control over your data and the application's infrastructure.
+This document outlines the security measures implemented in Pennywise to protect your data and ensure your privacy. Because you host Pennywise on your own Google Cloud project, you have complete control over your data and the application's infrastructure.
 
 ## Core Security Principles
 
-PennyFox is designed with the following core security principles in mind:
+Pennywise is designed with the following core security principles in mind:
 
-*   **Data Ownership**: You own your data. All financial information is stored in your personal Google Firebase Firestore instance, and PennyFox developers have no access to it.
+*   **Data Ownership**: You own your data. All financial information is stored in your personal Google Firebase Firestore instance, and Pennywise developers have no access to it.
 *   **Self-Hosted Infrastructure**: The entire backend, including Cloud Functions and the database, runs within your personal Google Cloud project. This gives you full control over the operational environment.
 *   **Transparency**: The entire codebase is open-source and available on GitHub. You can inspect the code at any time to verify its functionality and security.
 *   **Principle of Least Privilege**: The application and its components only request the minimum permissions necessary to function.
@@ -17,7 +17,7 @@ PennyFox is designed with the following core security principles in mind:
 
 ### 1. Web Application Security
 
-The PennyFox web application is a client-side React application that runs in your browser. Security is enforced through Firebase Authentication.
+The Pennywise web application is a client-side React application that runs in your browser. Security is enforced through Firebase Authentication.
 
 *   **Authentication**: Users log in via Google OAuth 2.0. Upon successful authentication, Firebase provides the client with a JSON Web Token (JWT).
 *   **Authorization**: This JWT is sent in the `Authorization` header of every request to the backend Cloud Firestore & Functions. The backend verifies the token's signature and expiration to ensure that the request is coming from an authenticated user.
